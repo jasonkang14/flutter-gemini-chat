@@ -1,7 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:flutter_gemini_chat/chat_page.dart';
 
-void main() {
+void main() async {
+  await dotenv.load(fileName: ".env");
+  final geminiAPIKey = dotenv.env['GEMINI_API_KEY'];
+  if (geminiAPIKey == null) {
+    throw Exception('Please provide your Gemini API key in the .env file');
+  }
+
+  Gemini.init(apiKey: geminiAPIKey);
+
   runApp(const MyApp());
 }
 

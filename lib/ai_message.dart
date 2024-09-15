@@ -14,9 +14,7 @@ class AIMessage extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Image.asset(
-          'assets/images/ai.png',
-        ),
+        Image.asset('assets/images/ai.png'),
         const SizedBox(width: 16),
         ChatMessage(content: content),
       ],

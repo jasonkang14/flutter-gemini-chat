@@ -16,9 +16,7 @@ class HumanMessage extends StatelessWidget {
       children: [
         ChatMessage(content: content),
         const SizedBox(width: 16),
-        Image.asset(
-          'assets/images/human.png',
-        ),
+        Image.asset('assets/images/human.png'),
       ],
     );
   }
