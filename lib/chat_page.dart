@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:flutter_gemini_chat/ai_message.dart';
 import 'package:flutter_gemini_chat/human_message.dart';
 import 'package:flutter_svg/svg.dart';
@@ -11,8 +12,29 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
+  final _chatController = TextEditingController();
+  final chatList = <Content>[];
+  final gemini = Gemini.instance;
+
+  Future<void> handleChatMessage(String newMessage) async {
+    _chatController.clear();
+    debugPrint('New message: $newMessage');
+    chatList.add(Content(role: 'user', parts: [Parts(text: newMessage)]));
+    setState(() {}); // Call setState after adding new chat
+
+    try {
+      final value = await gemini.chat(chatList);
+      debugPrint('value: $value');
+      chatList.add(Content(role: 'model', parts: [Parts(text: value?.output)]));
+      setState(() {}); // Call setState after adding new chat
+    } catch (error) {
+      debugPrint('Error: $error');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    print('chats: $chatList');
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -37,23 +59,22 @@ class _ChatPageState extends State<ChatPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const SingleChildScrollView(
+            SingleChildScrollView(
               child: Column(
-                children: [
-                  AIMessage(
-                      content:
-                          'Really love your most recent photo. I\'ve been trying to capture the same thing for a few months and would love some tips!'),
-                  SizedBox(height: 24),
-                  HumanMessage(
-                      content:
-                          'A fast 50mm like f1.8 would help with the bokeh. I\'ve been using primes as they tend to get a bit sharper images.'),
-                ],
+                children: chatList.map((chat) {
+                  if (chat.role == 'user') {
+                    return HumanMessage(content: chat.parts?.first.text ?? '');
+                  } else {
+                    return AIMessage(content: chat.parts?.first.text ?? '');
+                  }
+                }).toList(),
               ),
             ),
             Row(
               children: [
                 Expanded(
                   child: TextField(
+                    controller: _chatController,
                     style: const TextStyle(
                       color: Colors.black,
                       fontSize: 14,
@@ -72,12 +93,13 @@ class _ChatPageState extends State<ChatPage> {
                       fillColor: const Color(0xFFF7F7FC),
                       contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
                     ),
+                    onSubmitted: handleChatMessage,
                   ),
                 ),
                 const SizedBox(width: 8),
                 IconButton(
                   icon: SvgPicture.asset('assets/icons/send-chat.svg'),
-                  onPressed: () {},
+                  onPressed: () async => handleChatMessage(_chatController.text),
                 )
               ],
             ),
