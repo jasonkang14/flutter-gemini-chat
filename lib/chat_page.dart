@@ -19,12 +19,12 @@ class _ChatPageState extends State<ChatPage> {
   Future<void> handleChatMessage(String newMessage) async {
     _chatController.clear();
     chatList.add(Content(role: 'user', parts: [Parts(text: newMessage)]));
-    setState(() {}); // Call setState after adding new chat
+    setState(() {});
 
     try {
       final value = await gemini.chat(chatList);
       chatList.add(Content(role: 'model', parts: [Parts(text: value?.output)]));
-      setState(() {}); // Call setState after adding new chat
+      setState(() {});
     } catch (error) {
       debugPrint('Error: $error');
     }
