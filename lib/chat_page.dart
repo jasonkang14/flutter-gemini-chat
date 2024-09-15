@@ -30,6 +30,7 @@ class ChatPage extends StatelessWidget {
         padding: EdgeInsets.fromLTRB(16, 32, 16, 16),
         child: Column(
           children: [
+            Text('hey'),
             AIMessage(
                 content:
                     'Really love your most recent photo. I\'ve been trying to capture the same thing for a few months and would love some tips!'),

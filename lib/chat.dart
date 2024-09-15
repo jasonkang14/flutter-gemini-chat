@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gemini_chat/chat_message.dart';
+import 'package:flutter_gemini_chat/ai_message.dart';
+import 'package:flutter_gemini_chat/human_message.dart';
+import 'package:flutter_svg/svg.dart';
 
-class ChatPage extends StatelessWidget {
+class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
 
+  @override
+  State<ChatPage> createState() => _ChatPageState();
+}
+
+class _ChatPageState extends State<ChatPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,43 +36,23 @@ class ChatPage extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(16, 32, 16, 16),
         child: Column(
           children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Image.asset(
-                  'assets/images/ai.png',
-                ),
-                const SizedBox(width: 16),
-                const ChatMessage(
-                    content:
-                        'Really love your most recent photo. I\'ve been trying to capture the same thing for a few months and would love some tips!'),
-              ],
-            ),
+            const AIMessage(
+                content:
+                    'Really love your most recent photo. I\'ve been trying to capture the same thing for a few months and would love some tips!'),
             const SizedBox(height: 24),
+            const HumanMessage(
+                content:
+                    'A fast 50mm like f1.8 would help with the bokeh. I\'ve been using primes as they tend to get a bit sharper images.'),
             Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.03),
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(6),
-                        bottomRight: Radius.circular(6),
-                        bottomLeft: Radius.circular(6),
-                      ),
-                    ),
-                    child: const Text(
-                        'A fast 50mm like f1.8 would help with the bokeh. I\'ve been using primes as they tend to get a bit sharper images.'),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Image.asset(
-                  'assets/images/human.png',
-                ),
+                const TextField(),
+                const SizedBox(width: 8),
+                IconButton(
+                  icon: SvgPicture.asset('assets/icons/send-chat.svg'),
+                  onPressed: () {},
+                )
               ],
-            ),
+            )
           ],
         ),
       ),
