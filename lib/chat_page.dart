@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gemini_chat/ai_message.dart';
+import 'package:flutter_gemini_chat/human_message.dart';
 
 class ChatPage extends StatelessWidget {
   const ChatPage({super.key});
@@ -28,7 +30,13 @@ class ChatPage extends StatelessWidget {
         padding: EdgeInsets.fromLTRB(16, 32, 16, 16),
         child: Column(
           children: [
-            Text('Chat Page'),
+            AIMessage(
+                content:
+                    'Really love your most recent photo. I\'ve been trying to capture the same thing for a few months and would love some tips!'),
+            SizedBox(height: 24),
+            HumanMessage(
+                content:
+                    'A fast 50mm like f1.8 would help with the bokeh. I\'ve been using primes as they tend to get a bit sharper images.'),
           ],
         ),
       ),
