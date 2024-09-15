@@ -18,13 +18,11 @@ class _ChatPageState extends State<ChatPage> {
 
   Future<void> handleChatMessage(String newMessage) async {
     _chatController.clear();
-    debugPrint('New message: $newMessage');
     chatList.add(Content(role: 'user', parts: [Parts(text: newMessage)]));
     setState(() {}); // Call setState after adding new chat
 
     try {
       final value = await gemini.chat(chatList);
-      debugPrint('value: $value');
       chatList.add(Content(role: 'model', parts: [Parts(text: value?.output)]));
       setState(() {}); // Call setState after adding new chat
     } catch (error) {
@@ -34,7 +32,6 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
-    print('chats: $chatList');
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -62,11 +59,15 @@ class _ChatPageState extends State<ChatPage> {
             SingleChildScrollView(
               child: Column(
                 children: chatList.map((chat) {
-                  if (chat.role == 'user') {
-                    return HumanMessage(content: chat.parts?.first.text ?? '');
-                  } else {
-                    return AIMessage(content: chat.parts?.first.text ?? '');
-                  }
+                  Widget messageWidget = chat.role == 'user'
+                      ? HumanMessage(content: chat.parts?.first.text ?? '')
+                      : AIMessage(content: chat.parts?.first.text ?? '');
+                  return Column(
+                    children: [
+                      messageWidget,
+                      const SizedBox(height: 24),
+                    ],
+                  );
                 }).toList(),
               ),
             ),
