@@ -12,12 +12,12 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
-  final _chatController = TextEditingController();
+  final chatController = TextEditingController();
   List<Content> chatList = [];
   final gemini = Gemini.instance;
 
   Future<void> handleChatMessage(String newMessage) async {
-    _chatController.clear();
+    chatController.clear();
 
     setState(() {
       chatList = [
@@ -61,7 +61,10 @@ class _ChatPageState extends State<ChatPage> {
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 32, 16, 74),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 32,
+        ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -81,7 +84,7 @@ class _ChatPageState extends State<ChatPage> {
               children: [
                 Expanded(
                   child: TextField(
-                    controller: _chatController,
+                    controller: chatController,
                     style: const TextStyle(
                       color: Colors.black,
                       fontSize: 14,
@@ -106,7 +109,7 @@ class _ChatPageState extends State<ChatPage> {
                 const SizedBox(width: 8),
                 IconButton(
                   icon: SvgPicture.asset('assets/icons/send-chat.svg'),
-                  onPressed: () async => handleChatMessage(_chatController.text),
+                  onPressed: () async => handleChatMessage(chatController.text),
                 )
               ],
             ),
