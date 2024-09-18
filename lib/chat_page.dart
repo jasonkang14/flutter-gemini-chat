@@ -13,18 +13,27 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   final _chatController = TextEditingController();
-  final chatList = <Content>[];
+  List<Content> chatList = [];
   final gemini = Gemini.instance;
 
   Future<void> handleChatMessage(String newMessage) async {
     _chatController.clear();
-    chatList.add(Content(role: 'user', parts: [Parts(text: newMessage)]));
-    setState(() {});
+
+    setState(() {
+      chatList = [
+        ...chatList,
+        Content(role: 'user', parts: [Parts(text: newMessage)])
+      ];
+    });
 
     try {
       final value = await gemini.chat(chatList);
-      chatList.add(Content(role: 'model', parts: [Parts(text: value?.output)]));
-      setState(() {});
+      setState(() {
+        chatList = [
+          ...chatList,
+          Content(role: 'model', parts: [Parts(text: value?.output)])
+        ];
+      });
     } catch (error) {
       debugPrint('Error: $error');
     }
@@ -56,20 +65,17 @@ class _ChatPageState extends State<ChatPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            SingleChildScrollView(
-              child: Column(
-                children: chatList.map((chat) {
-                  Widget messageWidget = chat.role == 'user'
-                      ? HumanMessage(content: chat.parts?.first.text ?? '')
-                      : AIMessage(content: chat.parts?.first.text ?? '');
-                  return Column(
-                    children: [
-                      messageWidget,
-                      const SizedBox(height: 24),
-                    ],
-                  );
-                }).toList(),
-              ),
+            ListView.separated(
+              shrinkWrap: true,
+              itemCount: chatList.length,
+              separatorBuilder: (context, index) => const SizedBox(height: 24),
+              itemBuilder: (context, index) {
+                final chat = chatList[index];
+                Widget messageWidget = chat.role == 'user'
+                    ? HumanMessage(content: chat.parts?.first.text ?? '')
+                    : AIMessage(content: chat.parts?.first.text ?? '');
+                return messageWidget;
+              },
             ),
             Row(
               children: [
