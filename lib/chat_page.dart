@@ -1,7 +1,48 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_basics/ai_message.dart';
+import 'package:flutter_basics/human_message.dart';
+import 'package:flutter_gemini/flutter_gemini.dart';
+import 'package:flutter_svg/svg.dart';
 
-class ChatPage extends StatelessWidget {
+class ChatPage extends StatefulWidget {
   const ChatPage({super.key});
+
+  @override
+  State<ChatPage> createState() => _ChatPageState();
+}
+
+class _ChatPageState extends State<ChatPage> {
+  final _chatController = TextEditingController();
+  final gemini = Gemini.instance;
+  List<Content> _chatList = [];
+
+  void handleNewChat(String newChat) async {
+    setState(() {
+      _chatList = [
+        ..._chatList,
+        Content(
+          role: 'user',
+          parts: [
+            Parts(text: newChat),
+          ],
+        ),
+      ];
+    });
+    _chatController.clear();
+    final aiResponse = await gemini.chat(_chatList);
+    debugPrint('airesponse.output: ${aiResponse?.output}');
+    setState(() {
+      _chatList = [
+        ..._chatList,
+        Content(
+          role: 'model',
+          parts: [
+            Parts(text: aiResponse?.output),
+          ],
+        ),
+      ];
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,70 +71,54 @@ class ChatPage extends StatelessWidget {
           vertical: 32,
         ),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Image.asset('assets/images/ai.png'),
-                const SizedBox(width: 16),
-                const ChatMessage(
-                  isHuman: false,
-                  message:
-                      'Really love your most recent photo. I’ve been trying to capture the same thing for a few months and would love some tips!',
-                ),
-              ],
+            Expanded(
+              child: ListView.separated(
+                itemBuilder: (context, index) {
+                  return _chatList[index].role == 'model'
+                      ? AIMessage(message: _chatList[index].parts?.first.text ?? '')
+                      : HumanMessage(message: _chatList[index].parts?.first.text ?? '');
+                },
+                separatorBuilder: (context, index) => const SizedBox(height: 24),
+                itemCount: _chatList.length,
+              ),
             ),
-            const SizedBox(height: 24),
             Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const ChatMessage(
-                  message:
-                      'A fast 50mm like f1.8 would help with the bokeh. I’ve been using primes as they tend to get a bit sharper images.',
-                  isHuman: true,
+                Expanded(
+                  child: TextField(
+                    controller: _chatController,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.normal,
+                      fontSize: 14,
+                      height: 24 / 14,
+                      color: Colors.black,
+                    ),
+                    decoration: InputDecoration(
+                      fillColor: const Color(0xFFF7F7FC),
+                      filled: true,
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide.none,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 6,
+                      ),
+                      hintText: 'Add a message',
+                    ),
+                    onSubmitted: handleNewChat,
+                  ),
                 ),
-                const SizedBox(width: 16),
-                Image.network('assets/images/human.png'),
+                const SizedBox(width: 8),
+                IconButton(
+                  onPressed: () => handleNewChat(_chatController.text),
+                  icon: SvgPicture.asset('assets/icons/send-chat.svg'),
+                )
               ],
-            ),
+            )
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class ChatMessage extends StatelessWidget {
-  const ChatMessage({
-    super.key,
-    required this.message,
-    required this.isHuman,
-  });
-
-  final String message;
-  final bool isHuman;
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.black.withOpacity(0.03),
-          borderRadius: BorderRadius.only(
-            topLeft: isHuman ? const Radius.circular(6) : Radius.zero,
-            topRight: isHuman ? Radius.zero : const Radius.circular(6),
-            bottomLeft: const Radius.circular(6),
-            bottomRight: const Radius.circular(6),
-          ),
-        ),
-        child: Text(
-          message,
-          style: const TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.normal,
-            height: 18 / 13,
-          ),
         ),
       ),
     );
