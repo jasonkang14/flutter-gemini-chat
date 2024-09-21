@@ -14,7 +14,14 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   final _chatController = TextEditingController();
   final gemini = Gemini.instance;
-  List<Content> _chatList = [];
+  List<Content> _chatList = [
+    Content(
+      role: 'user',
+      parts: [
+        Parts(text: '안녕하세요'),
+      ],
+    ),
+  ];
 
   void handleNewChat(String newChat) async {
     setState(() {
