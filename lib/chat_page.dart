@@ -22,16 +22,20 @@ class _ChatPageState extends State<ChatPage> {
     setState(() {
       chatList = [
         ...chatList,
-        Content(role: 'user', parts: [Parts(text: newMessage)])
+        // Content(role: 'user', parts: [Parts(text: newMessage)]) 기존 2.x 버전
+        Content(role: 'user', parts: [Part.text(newMessage)]) // 3.x 버전
       ];
     });
 
     try {
       final value = await gemini.chat(chatList);
+      print('value output: ${value?.output}');
+
       setState(() {
         chatList = [
           ...chatList,
-          Content(role: 'model', parts: [Parts(text: value?.output)])
+          // Content(role: 'model', parts: [Parts(text: value?.output)]) //기존 2.x 버전
+          Content(role: 'model', parts: [Part.text(value?.output ?? '')]) // 3.x 버전
         ];
       });
     } catch (error) {
@@ -75,8 +79,8 @@ class _ChatPageState extends State<ChatPage> {
               itemBuilder: (context, index) {
                 final chat = chatList[index];
                 Widget messageWidget = chat.role == 'user'
-                    ? HumanMessage(content: chat.parts?.first.text ?? '')
-                    : AIMessage(content: chat.parts?.first.text ?? '');
+                    ? HumanMessage(content: chat.parts?.first is TextPart ? (chat.parts?.first as TextPart).text : '')
+                    : AIMessage(content: chat.parts?.first is TextPart ? (chat.parts?.first as TextPart).text : '');
                 return messageWidget;
               },
             ),
