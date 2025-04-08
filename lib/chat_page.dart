@@ -29,7 +29,6 @@ class _ChatPageState extends State<ChatPage> {
 
     try {
       final value = await gemini.chat(chatList);
-      print('value output: ${value?.output}');
 
       setState(() {
         chatList = [
