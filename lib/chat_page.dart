@@ -73,7 +73,6 @@ class _ChatPageState extends State<ChatPage> {
           children: [
             Expanded(
               child: ListView.separated(
-                shrinkWrap: true,
                 itemCount: chatList.length,
                 separatorBuilder: (context, index) => const SizedBox(height: 24),
                 itemBuilder: (context, index) {
