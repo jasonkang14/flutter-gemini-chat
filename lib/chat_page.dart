@@ -71,18 +71,21 @@ class _ChatPageState extends State<ChatPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            ListView.separated(
-              shrinkWrap: true,
-              itemCount: chatList.length,
-              separatorBuilder: (context, index) => const SizedBox(height: 24),
-              itemBuilder: (context, index) {
-                final chat = chatList[index];
-                Widget messageWidget = chat.role == 'user'
-                    ? HumanMessage(content: chat.parts?.first is TextPart ? (chat.parts?.first as TextPart).text : '')
-                    : AIMessage(content: chat.parts?.first is TextPart ? (chat.parts?.first as TextPart).text : '');
-                return messageWidget;
-              },
+            Expanded(
+              child: ListView.separated(
+                shrinkWrap: true,
+                itemCount: chatList.length,
+                separatorBuilder: (context, index) => const SizedBox(height: 24),
+                itemBuilder: (context, index) {
+                  final chat = chatList[index];
+                  Widget messageWidget = chat.role == 'user'
+                      ? HumanMessage(content: chat.parts?.first is TextPart ? (chat.parts?.first as TextPart).text : '')
+                      : AIMessage(content: chat.parts?.first is TextPart ? (chat.parts?.first as TextPart).text : '');
+                  return messageWidget;
+                },
+              ),
             ),
+            const SizedBox(height: 16),
             Row(
               children: [
                 Expanded(
