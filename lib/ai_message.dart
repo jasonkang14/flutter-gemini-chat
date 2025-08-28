@@ -16,7 +16,7 @@ class AIMessage extends StatelessWidget {
       children: [
         Image.asset('assets/images/ai.png'),
         const SizedBox(width: 16),
-        ChatMessage(content: content),
+        ChatMessage(content: content, isUser: false),
       ],
     );
   }

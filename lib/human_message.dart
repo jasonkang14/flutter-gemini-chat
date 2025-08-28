@@ -14,7 +14,7 @@ class HumanMessage extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ChatMessage(content: content),
+        ChatMessage(content: content, isUser: true),
         const SizedBox(width: 16),
         Image.asset('assets/images/human.png'),
       ],
